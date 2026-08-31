@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour 
 {
+    //movement
     public float movementSpeed = 5f;
     public float JumpHeight = 2f;
-
     public float fallGravityMultiplier = 2f;
+    public float mouseSensitivity = 2.0f;
+    public float pitchRange = 60.0f;
     private float forwardInputValue;
     private float strafeInputValue;
     private bool jumpInput;
@@ -14,22 +16,56 @@ public class PlayerMovement : MonoBehaviour
     private float terminalVelocity = 53f;
     private float verticalVelocity;
 
+    //Mouse movement
+    private float rotateCameraPitch;
+    private Camera firstPersonCam;
     private CharacterController characterController;
 
+    //Zoom
+    public float defaultFOV = 60f;
+    public float zoomFOV = 30f;
+    public float zoomSpeed = 8f; //higher or lower = transition speed
+    private bool zoomInput;
+    private float targetFOV;
     void Awake ()
     { 
         characterController = GetComponent<CharacterController>();
-    }
+        firstPersonCam = GetComponentInChildren<Camera>();
+        Cursor.lockState = CursorLockMode.Locked;
 
+        defaultFOV = firstPersonCam.fieldOfView;
+        targetFOV = defaultFOV;
+    }
     void Update()
     {
         forwardInputValue = Input.GetAxisRaw("Vertical");
         strafeInputValue = Input.GetAxisRaw("Horizontal");
         jumpInput = Input.GetButtonDown("Jump");
+        zoomInput = Input.GetButton("Fire2"); //right mouse button
+
         Movement();
         JumpAndGravity();
+        CameraMovement();
+        Zoom();
+    }
+    void CameraMovement()
+    {
+        //Rotate player
+        float rotateYaw = Input.GetAxis("Mouse X") * mouseSensitivity;
+        transform.Rotate(0, rotateYaw, 0);
+
+        //Up down for Camera
+        rotateCameraPitch += -Input.GetAxis("Mouse Y") * mouseSensitivity;
+        //Lock rotation so we can't flip
+        rotateCameraPitch = Mathf.Clamp(rotateCameraPitch, -pitchRange, pitchRange);
+        firstPersonCam.transform.localRotation = Quaternion.Euler(rotateCameraPitch, 0, 0);
     }
 
+    void Zoom()
+    {
+        targetFOV = zoomInput ? zoomFOV : defaultFOV;
+        firstPersonCam.fieldOfView = Mathf.Lerp(firstPersonCam.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
+    }
     void Movement()
     {
         Vector3 direction = (transform.forward * forwardInputValue + transform.right * strafeInputValue).normalized * movementSpeed * Time.deltaTime;
