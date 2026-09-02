@@ -29,7 +29,10 @@ public class EnemyWander : MonoBehaviour
 
     void Update()
     {
-        animator.SetFloat("Speed", agent.velocity.magnitude);
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", agent.velocity.magnitude);
+        }
 
         if (waiting)
         {
