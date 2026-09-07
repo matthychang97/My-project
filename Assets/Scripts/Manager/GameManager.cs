@@ -1,12 +1,20 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public HighScores highScores;
     //Reference to overlay Text to display winning text, etc
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI scoreText;
+
+    public GameObject highScorePanel;
+    public TextMeshProUGUI highScoresText;
+
+    public Button newGameButton;
+    public Button highScoresButton;
 
     public TargetHealth[] targets;
     public GameObject player;
@@ -23,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     private int score = 0;
 
+    public GameObject resetButton; // drag your button GameObject here in Inspector
+
     public enum GameState
     {
         Start,
@@ -30,6 +40,25 @@ public class GameManager : MonoBehaviour
         GameOver
     };
 
+    public void OnNewGame()
+    {
+        gameState = GameState.Start;
+    }
+
+    public void OnHighScores()
+    {
+        messageText.text = "";
+
+        highScoresButton.gameObject.SetActive(false);
+        highScorePanel.gameObject.SetActive(true);
+
+        string text = "";
+        for (int i = 0; i < highScores.scores.Length; i++)
+        {
+            text += highScores.scores[i] + "\n";
+        }
+        highScoresText.text = text;
+    }
     private GameState gameState;
     public GameState State { get { return gameState; } }
 
@@ -40,6 +69,8 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Confined;
+
         player.SetActive(false);
         worldCamera.gameObject.SetActive(true);
         for (int i = 0; i < targets.Length; i++)
@@ -52,6 +83,10 @@ public class GameManager : MonoBehaviour
         messageText.text = "Press Enter to Start";
         timerText.text = "";
         scoreText.text = "";
+
+        highScorePanel.gameObject.SetActive(false);
+        newGameButton.gameObject.SetActive(true);
+        highScoresButton.gameObject.SetActive(true);
     }
 
     // Update is called once per frame
@@ -105,6 +140,10 @@ public class GameManager : MonoBehaviour
         scoreText.text = "";
         timerText.text = "";
         startTimer = startTImerAmount;
+
+        gameState = GameState.Start;
+        messageText.text = "";
+
     }
 
     private void GameStateStart()
@@ -115,11 +154,16 @@ public class GameManager : MonoBehaviour
 
         if (startTimer < 0)
         {
+            Cursor.lockState = CursorLockMode.Locked;
             messageText.text = "";
             gameState = GameState.Playing;
             gamerTimer = gamerTimerAmount;
             startTimer = startTImerAmount;
             score = 0;
+
+            highScorePanel.gameObject.SetActive(false);
+            newGameButton.gameObject.SetActive(false);
+            highScoresButton.gameObject.SetActive(false);
 
             player.SetActive(true);
             worldCamera.gameObject.SetActive(false);
@@ -134,8 +178,10 @@ public class GameManager : MonoBehaviour
 
         if (gamerTimer <= 0)
         {
+            Cursor.lockState = CursorLockMode.Confined;
             //Debug.Log("Game Over Score: " + score);
             messageText.text = "Game Over! Score: " + score;
+            messageText.text = "Press Enter to play again!";
             gameState = GameState.GameOver;
             player.SetActive(false);
             worldCamera.gameObject.SetActive(true);
@@ -143,6 +189,10 @@ public class GameManager : MonoBehaviour
             {
                 targets[i].gameObject.SetActive(false);
             }
+            highScores.AddScore(score);
+            highScores.SaveScoresToFile();
+            newGameButton.gameObject.SetActive(true);
+            highScoresButton.gameObject.SetActive(true);
         }
 
         //Timer before activating target.

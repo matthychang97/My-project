@@ -27,13 +27,34 @@ public class PlayerMovement : MonoBehaviour
     public float zoomSpeed = 8f; //higher or lower = transition speed
     private bool zoomInput;
     private float targetFOV;
+
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+
     void Awake ()
     { 
         characterController = GetComponent<CharacterController>();
         firstPersonCam = GetComponentInChildren<Camera>();
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
 
         defaultFOV = firstPersonCam.fieldOfView;
+        targetFOV = defaultFOV;
+
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+    }
+
+    void OnEnable()
+    {
+        // CharacterController resists direct transform changes unless briefly disabled
+        characterController.enabled = false;
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+        characterController.enabled = true;
+
+        verticalVelocity = 0f;
+        rotateCameraPitch = 0f;
+        firstPersonCam.fieldOfView = defaultFOV;
         targetFOV = defaultFOV;
     }
     void Update()
