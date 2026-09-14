@@ -7426,7 +7426,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FireProjectile
   projectilePrefab: {fileID: 1164943728256480414, guid: 6eaa6f9a3f559954aaefe82506d949d8, type: 3}
   spawnTransform: {fileID: 801649957}
-  force: 500
+  force: 2000
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
