@@ -1,5 +1,5 @@
 using UnityEngine;
-
+//coded by Matt Chang
 public class PlayerMovement : MonoBehaviour 
 {
     //movement

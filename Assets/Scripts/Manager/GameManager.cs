@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+//Made by Matthew Chang
 public class GameManager : MonoBehaviour
 {
     public HighScores highScores;

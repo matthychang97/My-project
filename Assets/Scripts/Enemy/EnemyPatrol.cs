@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-
+//Made by Matthew Chang
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyWander : MonoBehaviour
 {

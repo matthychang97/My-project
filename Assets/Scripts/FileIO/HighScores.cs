@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 
+//Script coded by Matthew Chang
 public class HighScores : MonoBehaviour
 {
     public int[] scores = new int[10];
@@ -142,3 +143,4 @@ public class HighScores : MonoBehaviour
         Debug.Log("Score if " + newScore + " entered into high scores at position " + desiredIndex, this);
     }
 }
+//Script coded by Matthew Chang

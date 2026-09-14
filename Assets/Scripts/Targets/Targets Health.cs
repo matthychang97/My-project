@@ -1,5 +1,5 @@
 using UnityEngine;
-
+//Made by Matthew Chang
 public class TargetHealth : MonoBehaviour
 {
     public int maxHealth = 3;
